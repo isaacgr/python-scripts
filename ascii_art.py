@@ -11,12 +11,12 @@ def scale_image(image, new_width=100):
 	#Resizes the image preserving the aspect ratio
 
 	(original_width, original_height) = image.size
-	aspect_ratio = original_height/float(original_width)
-	new_height = int(aspect_ratio*new_width)
+	aspect_ratio = original_width/float(original_height)
+	new_height = int(new_width/aspect_ratio)
 
 	new_image = image.resize((new_width, new_height))
-	return new_image
-
+	return new_image, new_width, new_height
+	
 def convert_to_grey_scale(image):
 	return image.convert('L')
 
@@ -30,7 +30,7 @@ def map_to_ascii(image, range_width=25):
 	return "".join(pixels_to_chars)
 
 def convert_image_to_ascii(image, new_width=100):
-	image = scale_image(image)
+	image = scale_image(image)[0]
 	image = convert_to_grey_scale(image)
 
 	pixels_to_chars = map_to_ascii(image)
