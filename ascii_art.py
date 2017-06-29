@@ -37,7 +37,7 @@ def convert_image_to_ascii(image, new_width=100):
 	len_pixels_to_chars = len(pixels_to_chars)
 
 	image_ascii = [pixels_to_chars[index: index + new_width] for index in xrange(0, len_pixels_to_chars, new_width)]
-	return "\n".join(image_ascii)
+	return "\n".join(image_ascii), image_ascii
 
 def handle_image_conversion(image_path):
 	image = None
@@ -46,7 +46,7 @@ def handle_image_conversion(image_path):
 	except Exception, e:
 		print('Error')
 		return
-	image_ascii = convert_image_to_ascii(image)
+	image_ascii = convert_image_to_ascii(image)[0]
 	print image_ascii
 
 if __name__=='__main__':
