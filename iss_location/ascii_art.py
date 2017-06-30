@@ -7,7 +7,7 @@ from PIL import Image
 
 ASCII_CHARS = ['#', '?', '%', '.', 'S', '+', '.', '*', ':', ',', '@']
 
-def scale_image(image, new_width = 100):
+def scale_image(image, new_width = 200):
 	#Resizes the image preserving the aspect ratio
 
 	(original_width, original_height) = image.size
@@ -29,7 +29,7 @@ def map_to_ascii(image, range_width=25):
 
 	return "".join(pixels_to_chars)
 
-def convert_image_to_ascii(image, new_width=100):
+def convert_image_to_ascii(image, new_width=200):
 	image = scale_image(image)[0]
 	image = convert_to_grey_scale(image)
 

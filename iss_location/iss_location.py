@@ -18,11 +18,12 @@ def find_iss(width, height):
 	# normalize everything to make it easier
 	adj_lat = float(latitude) + 90
 	adj_long = float(longitude) + 180
-	
+	scale_lat = float(height*2)/180
+	scale_long = float(width*2)/360
 	# co-ordinates on the scaled map
-	map_lat = int(math.floor(adj_lat*.138))
-	map_long = int(math.floor(adj_long*.277))
-
+	map_lat = int(math.floor(adj_lat*scale_lat))
+	map_long = int(math.floor(adj_long*scale_long))
+#	print map_lat, map_long, scale_lat, scale_long, adj_lat, adj_long
 	return map_lat, map_long
 
 
@@ -53,7 +54,7 @@ def get_dimensions(image):
 	
 	#find and replace the character, then print the new image
 	y, x = find_iss(map_center['width'], map_center['height'])
-	ascii_iss_location = draw_map(image, y,x)
+	ascii_iss_location = draw_map(image, y, x)
 	print ascii_iss_location
 
 
