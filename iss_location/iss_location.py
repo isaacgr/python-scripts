@@ -21,9 +21,9 @@ def find_iss(width, height):
 	scale_lat = float(height*2)/180
 	scale_long = float(width*2)/360
 	# co-ordinates on the scaled map
-	map_lat = int(math.floor(adj_lat*scale_lat))
+	map_lat = (height*2)-int(math.floor(adj_lat*scale_lat))
 	map_long = int(math.floor(adj_long*scale_long))
-#	print map_lat, map_long, scale_lat, scale_long, adj_lat, adj_long
+	print map_lat, map_long, scale_lat, scale_long, adj_lat, adj_long
 	return map_lat, map_long
 
 
