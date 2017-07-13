@@ -1,0 +1,40 @@
+Lesson 2
+--------
+
+- machine learning is all about learning from examples
+- supervised learning is inferring a functioned based on training examples
+	- i.e. training a car to drive in various terrain by first doing it yourself and having the car learn from you
+	- consists of input and desired output
+	- ex. recognize someone from a picture based on tagged photos
+		  reccomend songs based on music choices and features of that song
+
+* Features and Labels
+
+	- ex. someone likes a particular song
+	- take features of that song (intensity, tempo, genre)
+	- label that song (like, dislike)
+
+	- plotting features on an X-Y graph and labeling them gives a basic dataset for types of songs that a user likes or dislikes
+		- can be clear or unclear on what the user likes depending on how the data is scattered
+
+
+* Scatter Plot
+
+	- what machine learning algorithms do is take in Data and define a 'Decision Surface' based on that data
+		- divides the classes in the data set in a way that new data points can be generalized into groups
+	
+	- when it is a straight line it is called 'linear'
+
+
+example.
+
+	P(C) = 0.01
+	Test: 	90% it is positive if you have C (sensitivity)
+			90% it is negative if you dont have C (specitivity)
+
+If the test comes back positive what is the probability that you have C?
+	A: 8%
+
+
+* Bayes Rule
+	Prior Probability x Test Evidence = Posterior Probability
