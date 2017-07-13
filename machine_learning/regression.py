@@ -25,31 +25,39 @@ forecast_out = int(math.ceil(.01*len(df)))
 
 df['label'] = df[forecast_col].shift(-forecast_out)
 # The label column for each row will be the adjusted close price 1% in the future
+# Adds 1% new rows with NaN values
 # shift will shift the columns up
 
 X = np.array(df.drop(['label'], 1))
-#features
+# Creates array
+# Features of df without label
 
 X = preprocessing.scale(X)
-# Scaling X before it is fed to the classifier
+# Scaling X featurese before it is fed to the classifier
 # Forces the features to looks more or less like noramlly distributed data (Gaussian with zero mean and variance)
 # In reality the value needs to be scaled with other data, as well as with the training data
+
 X = X[:-forecast_out]
 X_lately = X[-forecast_out:]
-# X_lately needs to come before forecast_out
+# X has all values up until forecast_out
+# X_lately has all values of forecast_out
 # Dont have a y value for X_lately
 
 df.dropna(inplace=True)
 y = np.array(df['label'])
-#label
-y=np.array(df['label'])
+# y is only the label features
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
-# Take all data, shuffle it (remembering X and Y)
+# Test_size represents the portion of the dataset to include in the test split
+# Essentially holding out part of the data as a test set to avoid overfitting the data
+# X_train, y_train which is used for learning the parameters of a predictive model
+# and a testing set X_test, y_test which is used for evaluating the fitted predictive model.
+
 
 clf = LinearRegression()
 clf.fit(X_train, y_train)
 # Can use this classifier to predict into the future
+# fit the test data (average together)
 accuracy = clf.score(X_test, y_test)
 # Accuracy or Confidence
 
@@ -82,3 +90,6 @@ plt.show()
 # are modelled using linear predictor funcitons
 
 # From the documentaion for the module, n_jobs determines number of threads to use for computation
+
+# Pickling will allow you to save your classifier so it can be loaded without having to constantly train against
+# large amounts of data
