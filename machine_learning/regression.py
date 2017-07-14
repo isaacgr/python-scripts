@@ -6,6 +6,7 @@ from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from matplotlib import style
+import pickle
 
 df = quandl.get('WIKI/GOOGL')
 
@@ -54,10 +55,19 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_
 # and a testing set X_test, y_test which is used for evaluating the fitted predictive model.
 
 
-clf = LinearRegression()
-clf.fit(X_train, y_train)
+#clf = LinearRegression()
+#clf.fit(X_train, y_train)
 # Can use this classifier to predict into the future
 # fit the test data (average together)
+
+#with open('linearregression.pickle', 'wb') as f:
+#    pickle.dump(clf, f)
+
+pickle_in = open('linearregression.pickle', 'rb')
+clf = pickle.load(pickle_in)
+# With pickle, we now have a pickle file in our directory that has the classifier data in it
+# Now we dont have to retrain it everytime we run the code
+
 accuracy = clf.score(X_test, y_test)
 # Accuracy or Confidence
 
@@ -93,3 +103,5 @@ plt.show()
 
 # Pickling will allow you to save your classifier so it can be loaded without having to constantly train against
 # large amounts of data
+# Like a file, open save
+# Want to save classifier after training, to avoid having to do it again
