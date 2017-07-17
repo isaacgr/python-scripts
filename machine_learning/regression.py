@@ -15,13 +15,14 @@ df = df[['Adj. Open','Adj. High','Adj. Low', 'Adj. Close', 'Adj. Volume']]
 df['HL_PCT'] = (df['Adj. High'] - df['Adj. Close'])/df['Adj. Close'] *100.0
 df['PCT_change'] = (df['Adj. Close'] - df['Adj. Open'])/df['Adj. Open'] *100.0
 
+#
 df = df[['Adj. Close', 'HL_PCT', 'PCT_change', 'Adj. Volume']]
 
 forecast_col = 'Adj. Close'
 df.fillna(-99999, inplace = True)
 # Dont want to work with N/A data in machine learning. Better to treat as an outlier so as not to sacrifice data.
 
-forecast_out = int(math.ceil(.01*len(df)))
+forecast_out = int(math.ceil(.1*len(df)))
 # Number of days out. Try to predict out 1% of the dataframe
 
 df['label'] = df[forecast_col].shift(-forecast_out)
@@ -29,7 +30,7 @@ df['label'] = df[forecast_col].shift(-forecast_out)
 # Adds 1% new rows with NaN values
 # shift will shift the columns up
 
-X = np.array(df.drop(['label'], 1))
+X = np.array(df.drop(['label', 'Adj. Close'], 1))
 # Creates array
 # Features of df without label
 
@@ -38,8 +39,8 @@ X = preprocessing.scale(X)
 # Forces the features to looks more or less like noramlly distributed data (Gaussian with zero mean and variance)
 # In reality the value needs to be scaled with other data, as well as with the training data
 
-X = X[:-forecast_out]
 X_lately = X[-forecast_out:]
+X = X[:-forecast_out]
 # X has all values up until forecast_out
 # X_lately has all values of forecast_out
 # Dont have a y value for X_lately
