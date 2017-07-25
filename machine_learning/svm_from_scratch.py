@@ -8,6 +8,7 @@
 # u is just a feature set, comprised of x1 and x2
 # we know u, but not w or b
 # for both a left and right class the equation to derive a support vector is yi(xi.w+b) -1 = 0 (see video 22 for derivation)
+# we want to maximize the width between the support vectors to find the best supporting hyperplane
 
 
 import numpy as np
@@ -20,9 +21,9 @@ class Support_Vector_Machine:
         self.visualization = visualization
         self.colors={1:'r', -1:'b'}
         if self.visualization:
-            self.fig = plt.figure()
-            self.ax = self.fig.add_subplot(1,1,1)
-    # train data
+            self.fig = plt.figure() # just establishing the plot figure
+            self.ax = self.fig.add_subplot(1,1,1)   # 1x1 grid with one plot
+    # train data (optimize to find w and b)
     def fit(self, data):
         self.data = data
         #{ ||w||: [w,b]} is what opt_dict will be
@@ -37,11 +38,14 @@ class Support_Vector_Machine:
         self.min_feature_value = min(all_data)
         all_data = None
 
+        # support vectors yi(xi.w +b) = 1
+        # will know that youve found a good value for w and b when in both positivie and negative classes you have a value close to 1
         step_sizes = [self.max_feature_value * 0.1,
                       self.max_feature_value *0.01,
                       self.max_feature_value *0.001]    # point of expense
 
         b_range_multiple = 5 # extremely expensive
+        # dont need to take as small of steps as we do with w
         b_multiple = 5
         latest_optimum = self.max_feature_value * 10 #the first element in w
 
@@ -49,17 +53,43 @@ class Support_Vector_Machine:
             w = np.array([latest_optimum, latest_optimum])
             optimized = False # we can do this because convex
             while not optimized:
+                for b in np.arange(-1*(self.max_feature_value*b_range_multiple),
+                                        self.max_feature_value*b_range_multiple,
+                                        setp*b_multiple):
+                    for transformation in transforms:
+                        w_t = w*transformation
+                        found_option = True
+                        # weakest link in svm fundamentally
+                        # SMO attempts to fix this
+                        # yi(xi.w+b)>=1
+                        for i in self.data:
+                            for xi in self.data[i]:
+                                yi=i
+                                if not yi(np.dot(w_t, xi)+b)>=1:
+                                    found_option = False
+                                    break
+                        if found_option:
+                            opt_dict[np.linalg.norm(w_t)] = [w_t, b]
+                if w[0] < 0:
+                    optimized = True
+                    print('Optimized a Step')
+                else:
+                    w = w - step
+            norms = sorted([n for n in opt_dict])
+            opt_choice = norms[0]
 
-
+            self.w = opt_choice[0]
+            self.b = opt_choice[1]
+            latest_optimum = opt_choice[0][0]
 
     def predict(self, features):
         # sign(x.w+b)
         # we want to determine what the sign of the above equation is so we can classify the data
-        classification = np.sign(np.dot(np.array(features), self.w)+self.b)
+        classification = np.sign(np.dot(np.array(features), self.w)+self.b) # need to optimize for w and b
 
         return classification
 
-
+# keys are the class, arrays are the features
 data_dict = {-1:np.array([[1,7,],
                            [2,8],
                            [3,8]]),
