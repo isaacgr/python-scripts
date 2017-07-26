@@ -9,6 +9,11 @@
 # we know u, but not w or b
 # for both a left and right class the equation to derive a support vector is yi(xi.w+b) -1 = 0 (see video 22 for derivation)
 # we want to maximize the width between the support vectors to find the best supporting hyperplane
+# width = 2/||w|| (see video 23) so we want to minimize w
+# we want to maximize b (the bias)
+
+# the decision boundary is the seperating hyperplane (seperates the positive and negative classes)
+# the equation for the classification is the sign(xi.w +b) (see video 24)
 
 
 import numpy as np
@@ -26,16 +31,17 @@ class Support_Vector_Machine:
     # train data (optimize to find w and b)
     def fit(self, data):
         self.data = data
-        #{ ||w||: [w,b]} is what opt_dict will be
+        # { ||w||: [w,b]} is what opt_dict will be
         opt_dict = {}
+        # these are what will be applied to w to keep it normalized?
         transforms = [[1,1], [-1,1], [-1,-1], [1,-1]]
         all_data = []
         for yi in self.data:
             for featureset in self.data[yi]:
                 for feature in featureset:
-                    all_data.append(feature)
-        self.max_feature_value = max(all_data)
-        self.min_feature_value = min(all_data)
+                    all_data.append(feature)    # all_data just holds all features
+        self.max_feature_value = max(all_data)  # want to maximize b
+        self.min_feature_value = min(all_data)  # want to minimize w
         all_data = None
 
         # support vectors yi(xi.w +b) = 1
