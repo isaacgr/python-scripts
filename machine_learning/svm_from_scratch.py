@@ -14,7 +14,8 @@
 
 # the decision boundary is the seperating hyperplane (seperates the positive and negative classes)
 # the equation for the classification is the sign(xi.w +b) (see video 24)
-
+# essentially for SVM class(knownfeatures.w +b)>=1
+# SVM is a convex problem
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -32,9 +33,12 @@ class Support_Vector_Machine:
     def fit(self, data):
         self.data = data
         # { ||w||: [w,b]} is what opt_dict will be
+        # we will find the key that has the lowest magnitude, and the value of that key will be our answer
         opt_dict = {}
-        # these are what will be applied to w to keep it normalized?
         transforms = [[1,1], [-1,1], [-1,-1], [1,-1]]
+        # these are what will be applied to w (dot w with the transforms)
+        # we need to test all cases where the values of w are positvie and negative
+        # SVM could be oriented differently
         all_data = []
         for yi in self.data:
             for featureset in self.data[yi]:
@@ -46,6 +50,7 @@ class Support_Vector_Machine:
 
         # support vectors yi(xi.w +b) = 1
         # will know that youve found a good value for w and b when in both positivie and negative classes you have a value close to 1
+        # want to take large stpes, and decrease those steps as we get closer to the minimum value of w
         step_sizes = [self.max_feature_value * 0.1,
                       self.max_feature_value *0.01,
                       self.max_feature_value *0.001]    # point of expense
@@ -53,11 +58,12 @@ class Support_Vector_Machine:
         b_range_multiple = 5 # extremely expensive
         # dont need to take as small of steps as we do with w
         b_multiple = 5
-        latest_optimum = self.max_feature_value * 10 #the first element in w
+        # find the largest value, and then make w equal to that number
+        latest_optimum = self.max_feature_value * 10 # the first element in w
 
         for step in step_sizes:
             w = np.array([latest_optimum, latest_optimum])
-            optimized = False # we can do this because convex
+            optimized = False # we can do this because convex (we know when we've been optimized)
             while not optimized:
                 for b in np.arange(-1*(self.max_feature_value*b_range_multiple),
                                         self.max_feature_value*b_range_multiple,
