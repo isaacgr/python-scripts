@@ -56,7 +56,7 @@ class Support_Vector_Machine:
                       self.max_feature_value *0.001]    # point of expense
 
         b_range_multiple = 5 # extremely expensive
-        # dont need to take as small of steps as we do with w
+        # dont need to take as small of steps with b as we do with w
         b_multiple = 5
         # find the largest value, and then make w equal to that number
         latest_optimum = self.max_feature_value * 10 # the first element in w
@@ -65,41 +65,46 @@ class Support_Vector_Machine:
             w = np.array([latest_optimum, latest_optimum])
             optimized = False # we can do this because convex (we know when we've been optimized)
             while not optimized:
-                for b in np.arange(-1*(self.max_feature_value*b_range_multiple),
-                                        self.max_feature_value*b_range_multiple,
-                                        setp*b_multiple):
+                for b in np.arange(-1*(self.max_feature_value*b_range_multiple), self.max_feature_value*b_range_multiple, step*b_multiple):
                     for transformation in transforms:
                         w_t = w*transformation
                         found_option = True
+                        for i in self.data:
                         # weakest link in svm fundamentally
                         # SMO attempts to fix this
-                        # yi(xi.w+b)>=1
-                        for i in self.data:
+                        # yi(xi.w+b)>=1 is the constraint function
                             for xi in self.data[i]:
                                 yi=i
                                 if not yi(np.dot(w_t, xi)+b)>=1:
                                     found_option = False
                                     break
                         if found_option:
-                            opt_dict[np.linalg.norm(w_t)] = [w_t, b]
-                if w[0] < 0:
+                            opt_dict[np.linalg.norm(w_t)] = [w_t, b]    # magnitude of the vector
+                if w[0] < 0: # if we get as close as possibel to the smallest part of the convex taking our current steps
                     optimized = True
                     print('Optimized a Step')
                 else:
-                    w = w - step
-            norms = sorted([n for n in opt_dict])
-            opt_choice = norms[0]
-
+                    w = w - step    # if not optimized, take another step
+            norms = sorted([n for n in opt_dict])   # sorting the list of magnitudes lowest to highest
+            opt_choice = opt_dict[norms[0]] # this is the optimal choice
+            # ||w|| :[w,b]
             self.w = opt_choice[0]
             self.b = opt_choice[1]
-            latest_optimum = opt_choice[0][0]
+            latest_optimum = opt_choice[0][0] + step*2
 
     def predict(self, features):
         # sign(x.w+b)
         # we want to determine what the sign of the above equation is so we can classify the data
         classification = np.sign(np.dot(np.array(features), self.w)+self.b) # need to optimize for w and b
-
+        if classification !=0 and self.visulalization:
+            self.ax.scatter(features[0], features[1], s=200, marker = *, c=self.colors[classification])
         return classification
+
+    def visualize(self):
+        [self.ax.scatter(x[0], x[1], s=100, color=self.colors[i]) for x in data_dict[i] for i in data_dict]
+        # hyperplane = x.w + b
+        # v = x.w +b
+        def hyperplane(x,w,b, v):
 
 # keys are the class, arrays are the features
 data_dict = {-1:np.array([[1,7,],
