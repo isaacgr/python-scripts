@@ -1,0 +1,18 @@
+# in reality the you are never dealing with linearly seperable data
+# the data may be scattered and cluttered together
+# to help seperate the data we can add another feature (dimension) to our graph
+# this adds complexity becuase the SVM does not handle non-linesar very well (it can take time to process)
+
+# can use kernels to transform the non-linesar data into linear data by finding similarities
+# betweeen features and creating another feature
+
+# kernels use the inner (dot) product of two vectors
+# can increase dimensions without a large increase in processing cost
+# similarity function, not unique to the SVM
+# projection of X1 onto X2
+
+# K(x,x`) = z.z` -> z = function(x), z` = function(x`)
+
+# given a feature set [x1,x2] the new z space is z=[1,x1,x2,x1^2, x2^2, x1x2]
+# we convert the feature set to a second order polynomial, then take the inner product of z and z`
+# we can now say that K(x,x`) = (1+x*x`)^p where p=2
