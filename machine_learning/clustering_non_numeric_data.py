@@ -1,5 +1,4 @@
 
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import style
@@ -24,7 +23,7 @@ def handle_non_numerical_data(df):
 
         if df[column].dtype != np.int64 and df[column].dtype !=np.float64:
             column_contents = df[column].values.tolist()
-            unique_elements = set(column_contents)
+            unique_elements = set(column_contents)s
             x = 0
             for unique in unique_elements:
                 if unique not in text_digit_vals:
