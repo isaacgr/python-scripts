@@ -18,10 +18,9 @@ capacitorQuery = """INSERT INTO Capacitor (Serial_Number) VALUES (%s)"""
 
 for sheet in TEST_SHEETS[1:]:
     #Date_Tested = sheet
-
-    for column in range(0, sheet.ncols)[::3]:
+    for column in range(0, sheet.ncols)[::3][:-1]:
         Serial_Number = sheet.cell(0,column).value
-        PIN = str(sheet.cell(1, column).value)
+        PIN = sheet.cell(1, column).value
 
         for row in range(2, sheet.nrows):
             Capacitance = sheet.cell(row, column).value
