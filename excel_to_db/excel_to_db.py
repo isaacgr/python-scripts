@@ -40,39 +40,45 @@ class DatabaseInsert:
     # Generic INSERT query
     def insert_to_database(self, table, columns):
         columns = tuple(columns)
-        values = self.get_values(columns)
-        value_strings =
-        query = "INSERT INTO" + " " + table + " " + columns + "VALUES" + " " + values
+        column_names = get_database_columns()
+        values = self.get_values(columns, column_names)
+        query = "INSERT INTO" + " " + table + " " + columns + " VALUES" + " " + values
         self.cursor.execute(query, values)
         print 'Wrote %s Rows to %s Columns' % (self.sheet.nrows, self.sheet.ncols)
 
-    # This function needs to be changed on a per sheet basis
-    def get_values(self, columns):
-        values = []
+
+    def get_database_columns(self):
+        num_fields = len(self.cursor.description)
+        field_names = [i[0] for i in self.cursor.description]
+        return field_names
+
+
+    # This function needs to be changed on a per sheet basis until
+    # excel sheet headers are updated
+    def get_values(self, columns, column_names):
+        values = {}
+        db_values = []
         for sheet in self.SHEETS[1:]:
-            Date_Tested = self.SHEETS.index(sheet)
+            values['Date_Tested'] = self.SHEETS.index(sheet)
             for column in range(0, sheet.ncols)[::3][:-1]:
-                Serial_Number = sheet.cell(0,column).value
-                PIN = sheet.cell(1, column).value
-
+                values['Serial_Number'] = sheet.cell(0,column).value
+                values['PIN'] = sheet.cell(1, column).value
                 for row in range(2, sheet.nrows):
-                    Capacitance = sheet.cell(row, column).value
-                    Charge_Count = sheet.cell(row, column + 1).value
-                    Cycles = sheet.cell(row, column + 2).value
-
-                    return tuple(values)
+                    values['Capacitance'] = sheet.cell(row, column).value
+                    values['Charge_Count'] = sheet.cell(row, column + 1).value
+                    values['Cycles'] = sheet.cell(row, column + 2).value
+                    for key in values.keys():
+                        for column in columns:
+                            if column == key:
+                                db_values.append(values[key])
+        return tuple(db_values)
 
 
 results = DatabaseInsert(RESULTS_SHEET, DATABASE_CONNS['CapacitorTests'])
 results.insert_to_database('TestResults', TEST_RESULT_COLUMNS)
 results.insert_to_database('Capacitor', CAPACITOR_COLUMNS)
-results.insert_to_database('Materials', MATERIAL_COLUMNS)
+#results.insert_to_database('Materials', MATERIAL_COLUMNS)
 
 cursor.close()
 database.commit()
 database.close()
-
-#testResultsQuery = """INSERT INTO TestResults (Capacitance, Charge_Count, Cycles, PIN)
-#                        VALUES (%s, %s, %s, %s)"""
-#capacitorQuery = """INSERT INTO Capacitor (Serial_Number) VALUES (%s)"""
-#materialsQuery = """INSERT INTO Materials (Electrolyte, Seperator, DPI, Form_Factor)"""
