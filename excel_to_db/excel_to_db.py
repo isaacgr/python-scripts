@@ -3,11 +3,44 @@ import MySQLdb
 import re
 
 
-TEST_SHEETS = []
-testBook = xlrd.open_workbook("Compiled Tests.xlsx")
-[TEST_SHEETS.append(testBook.sheet_by_name(str(i))) for i in testBook.sheet_names()]
+RESULTS_SHEET = "Compiled Tests.xlsx"
+MATERIALS_SHEET = ""
 
-database = MySQLdb.connect(host="localhost", user="root", passwd="", db="CapacitorTests")
+TEST_RESULT_COLUMNS = ['Capacitance', 'Charge_Count', 'Cycles', 'PIN']
+CAPACITOR_COLUMNS = ['Serial_Number']
+MATERIAL_COLUMNS = ['Electrolyte', 'Seperator', 'DPI', 'Form_Factor']
+
+DATABASE_CONNS = {
+    # DB Name : Credentials
+    'CapacitorTests': {
+        'host':'localhost',
+        'user':'root',
+        'password':'',
+    }
+}
+
+class DatabaseInsert():
+    """Insert excel sheet data into database"""
+    def __init__(self, workbook, database, connection):
+        self.workbook = workbook
+        self.database = database
+        self.connection = connection
+        self.workbook = xlrd.open_workbook(workbook)
+        SHEETS = []
+        [SHEETS.append(workbook.sheet_by_name(str(i))) for i in workbook.sheet_names()]
+
+
+    def connect_to_db(self):
+        db, host, user, passwd = self.connection
+        db_connection = MySQLdb.connect(host=host, user=user, passwd=passwd, db=db)
+
+
+
+
+
+
+
+
 
 cursor = database.cursor()
 
