@@ -37,15 +37,6 @@ class DatabaseInsert:
         db_connection = MySQLdb.connect(host=host, user=user, passwd=passwd, db=db)
         cursor = db_connection.cursor()
 
-    # Generic INSERT query
-    def insert_to_database(self, table, columns):
-        columns = tuple(columns)
-        column_names = get_database_columns()
-        values = self.get_values(columns, column_names)
-        query = "INSERT INTO" + " " + table + " " + columns + " VALUES" + " " + values
-        self.cursor.execute(query, values)
-        print 'Wrote %s Rows to %s Columns' % (self.sheet.nrows, self.sheet.ncols)
-
 
     def get_database_columns(self):
         num_fields = len(self.cursor.description)
@@ -55,9 +46,13 @@ class DatabaseInsert:
 
     # This function needs to be changed on a per sheet basis until
     # excel sheet headers are updated
-    def get_values(self, columns, column_names):
+    def insert_to_database(self, table, columns, column_names):
+        columns = tuple(columns)
+        column_names = get_database_columns()
+        query = "INSERT INTO" + " " + table + " " + columns + " VALUES" + " " + values
         values = {}
         db_values = []
+
         for sheet in self.SHEETS[1:]:
             values['Date_Tested'] = self.SHEETS.index(sheet)
             for column in range(0, sheet.ncols)[::3][:-1]:
@@ -71,7 +66,9 @@ class DatabaseInsert:
                         for column in columns:
                             if column == key:
                                 db_values.append(values[key])
-        return tuple(db_values)
+                                self.cursor.execute(query, tuple(db_values))
+
+        print 'Wrote %s Rows to %s Columns' % (self.sheet.nrows, self.sheet.ncols)
 
 
 results = DatabaseInsert(RESULTS_SHEET, DATABASE_CONNS['CapacitorTests'])
