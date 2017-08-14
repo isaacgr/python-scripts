@@ -70,4 +70,5 @@ results.insert_results_to_database('TestResults', TEST_RESULT_COLUMNS, \
                 """INSERT INTO TestResults (Pin, Date_Tested, Charge_Count, Capacitance, Serial_Number, Cycles) \
                     VALUES (%s, %s, %s, %s, %s, %s)""")
 
+#materials = DatabaseInsert(MATERIALS_SHEET, DATABASE_CONNS['CapacitorTests'])
 #results.insert_materials_to_database('Materials', MATERIAL_COLUMNS)
