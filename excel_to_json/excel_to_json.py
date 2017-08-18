@@ -39,21 +39,23 @@ class JsonConversion:
         # loop through spreadsheet and get the results from the columns and rows
         for sheet in self.sheet_obj[1:]:
             values['Date_Tested'] = self.workbook.sheet_names()[self.sheet_obj.index(sheet)]
+
             for column in range(0, sheet.ncols)[::3][:-1]:
                 values['Serial_Number'] = str(sheet.cell(0,column).value)
                 values['Pin'] = str(sheet.cell(1, column).value)
                 # restart loop if there is no serial number
                 if values['Serial_Number'] == '':
                     continue
+                # reinitialize these to empty list, else they will just keep appending
+                values['Capacitance'] = []
+                values['Charge_Count']=[]
+                values['Cycles'] = []
 
                 for row in range(2, sheet.nrows):
                     values['Capacitance'].append(sheet.cell(row, column).value)
                     values['Charge_Count'].append(sheet.cell(row, column + 1).value)
                     values['Cycles'].append(sheet.cell(row, column + 2).value)
-                # reinitialize these to empty list, else they will just keep appending
-                values['Capacitance'] = []
-                values['Charge_Count']=[]
-                values['Cycles'] = []
+
                 # append to a serial numbers results if it shows in more than one sheet
                 if values['Serial_Number'] in serial_number_list:
                     serial = values['Serial_Number']
@@ -62,18 +64,20 @@ class JsonConversion:
                     continue
 
                 serial_number = values['Serial_Number']
+                date_tested = values['Date_Tested']
                 serial_number_list.append(values['Serial_Number'])
 
                 self.results['capacitor'].append({
 
                     serial_number: [{
 
-                        'Date_Tested':values['Date_Tested'],
-                        'Capacitance':values['Capacitance'],
-                        'Charge_Count':values['Charge_Count'],
-                        'Cycles':values['Cycles'],
-                        'Pin':values['Pin'],
+                        date_tested: {
 
+                            'Capacitance':values['Capacitance'],
+                            'Charge_Count':values['Charge_Count'],
+                            'Cycles':values['Cycles'],
+                            'Pin':values['Pin'],
+                        }
                     }]
                 })
 
@@ -85,17 +89,18 @@ class JsonConversion:
 
                 result[serial].append({
 
-                    'Date_Tested':values['Date_Tested'],
-                    'Capacitance':values['Capacitance'],
-                    'Charge_Count':values['Charge_Count'],
-                    'Cycles':values['Cycles'],
-                    'Pin':values['Pin'],
+                    values['Date_Tested']: {
 
+                        'Capacitance':values['Capacitance'],
+                        'Charge_Count':values['Charge_Count'],
+                        'Cycles':values['Cycles'],
+                        'Pin':values['Pin'],
+
+                    }
                 })
 
 
     def write_file(self):
-        print(self.results)
         with open('test_results.json', 'w') as outfile:
             json.dump(self.results, outfile, indent=4)
 
