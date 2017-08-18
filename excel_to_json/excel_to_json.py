@@ -1,6 +1,9 @@
 import xlrd
 import MySQLdb
 import json
+from collections import OrderedDict
+import sys
+
 RESULTS_SHEET = "Compiled Tests.xlsx"
 MATERIALS_SHEET = ""
 
@@ -16,39 +19,52 @@ class JsonConversion:
 
     # TODO: Format excel sheets so this can be made to be more generic
     def convert_results_to_json(self):
-        results = {}
-        values = {}
-        results['capacitor'] = []
+        # initialize results
+        self.results = OrderedDict()
+        self.results = {
+            'capacitor': []
+        }
+        # initialize values
+        values = {
+            'Date_Tested': '',
+            'Serial_Number': '',
+            'Pin': '',
+            'Capacitance': [],
+            'Charge_Count': [],
+            'Cycles': [],
+        }
 
-        values['Capacitance'] = []
-        values['Charge_Count'] = []
-        values['Cycles'] = []
-        values['Pin'] = []
-
+        serial_number_list = []
 
         # loop through spreadsheet and get the results from the columns and rows
         for sheet in self.sheet_obj[1:]:
             values['Date_Tested'] = self.workbook.sheet_names()[self.sheet_obj.index(sheet)]
             for column in range(0, sheet.ncols)[::3][:-1]:
-                values['Serial_Number'] = sheet.cell(0,column).value
+                values['Serial_Number'] = str(sheet.cell(0,column).value)
+                values['Pin'] = str(sheet.cell(1, column).value)
                 # restart loop if there is no serial number
                 if values['Serial_Number'] == '':
                     continue
-                # pin almost as unique as serial, since only one cap on one pin at a time
-                values['Pin'] = str(sheet.cell(1, column).value)
+
                 for row in range(2, sheet.nrows):
                     values['Capacitance'].append(sheet.cell(row, column).value)
                     values['Charge_Count'].append(sheet.cell(row, column + 1).value)
                     values['Cycles'].append(sheet.cell(row, column + 2).value)
-
-                if values['Serial_Number'] in values.values():
+                # reinitialize these to empty list, else they will just keep appending
+                values['Capacitance'] = []
+                values['Charge_Count']=[]
+                values['Cycles'] = []
+                # append to a serial numbers results if it shows in more than one sheet
+                if values['Serial_Number'] in serial_number_list:
                     serial = values['Serial_Number']
-                    handle_duplicate_serial_number(serial, values)
+                    results = self.results['capacitor']
+                    self.handle_duplicate_serial_number(results, serial, values)
                     continue
 
                 serial_number = values['Serial_Number']
+                serial_number_list.append(values['Serial_Number'])
 
-                results['results'].append({
+                self.results['capacitor'].append({
 
                     serial_number: [{
 
@@ -62,17 +78,28 @@ class JsonConversion:
                 })
 
 
-    def handle_duplicate_serial_number(serial, values):
+    def handle_duplicate_serial_number(self, results, serial, values):
+        # loop through json to find the serial number and append to it
+        for result in results:
+            if serial in result.keys():
 
-        results['results'][serial].append({
+                result[serial].append({
 
-            'Date_Tested':values['Date_Tested'],
-            'Capacitance':values['Capacitance'],
-            'Charge_Count':values['Charge_Count'],
-            'Cycles':values['Cycles'],
-            'Pin':values['Pin'],
+                    'Date_Tested':values['Date_Tested'],
+                    'Capacitance':values['Capacitance'],
+                    'Charge_Count':values['Charge_Count'],
+                    'Cycles':values['Cycles'],
+                    'Pin':values['Pin'],
 
-        })
+                })
 
 
-        print 'Wrote %s Rows from %s Columns (%s lines)' % (sheet.nrows, sheet.ncols, (sheet.nrows*sheet.ncols))
+    def write_file(self):
+        print(self.results)
+        with open('test_results.json', 'w') as outfile:
+            json.dump(self.results, outfile, indent=4)
+
+
+test_results = JsonConversion(RESULTS_SHEET)
+test_results.convert_results_to_json()
+test_results.write_file()
