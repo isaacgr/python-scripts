@@ -20,7 +20,6 @@ class JsonConversion:
     # TODO: Format excel sheets so this can be made to be more generic
     def convert_results_to_json(self):
         # initialize results
-        self.results = OrderedDict()
         self.results = {
             'capacitor': []
         }

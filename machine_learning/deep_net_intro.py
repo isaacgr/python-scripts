@@ -8,10 +8,10 @@ input -> weight -> hidden layer 1 -> activation function -> weights -> hidden la
 ..... -> output layer
 '''
 # feed forward nn, the data gets passed straight through
-# compare the ouput  to the intended output with a cost function
-# then use an optimizer to attempt to minimize that cost
+# compare the ouput  to the intended output with a cost function (how close are we to the intended target)
+# then use an optimizer to attempt to minimize that cost(AdamOptimizer, SGD, AdaGrad)
 # that then goes back and manipulates the weights (backpropogation)
-# then feed forward + backpropogation = epoch
+# then feed forward + backpropogation = epoch (this is one cycle of feedforward and backpropogation)
 
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
@@ -26,6 +26,7 @@ mnist = input_data.read_data_sets("/tmp/data", one_hot=True)
 3 = [0,0,0,1,0,0,0,0,0]
 '''
 # these can be unique
+# deep nn with multiple layers
 n_nodes_hl1 = 500
 n_nodes_hl2 = 500
 n_nodes_hl3 = 500
@@ -35,20 +36,23 @@ batch_size = 100 # go through batches of 100 features at a time and feed them to
 
 # height x width
 # 28x28 = 784
-x = tf.placeholder('float',[None, 784])
+x = tf.placeholder('float',[None, 784]) # just a string of pixel values, dont need to maintain the shape
 y = tf.placeholder('float')
 
 def neural_network_model(data):
     # will create a tensor(array) of wieghts
     # the bias is added at the end (input*weights + bias)
+    # the weights are a tensorflow Variable
+    # that variable is a random_normal
+    # we will specify the shape of that normal
     hidden_1_layer = {
         'weights':tf.Variable(tf.random_normal([784, n_nodes_hl1])),
         'biases': tf.Variable(tf.random_normal([n_nodes_hl1]))
         }
 
     hidden_2_layer = {
-    'weights':tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2])),
-    'biases': tf.Variable(tf.random_normal([n_nodes_hl2]))
+        'weights':tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2])),
+        'biases': tf.Variable(tf.random_normal([n_nodes_hl2]))
         }
 
     hidden_3_layer = {
@@ -71,7 +75,7 @@ def neural_network_model(data):
     l3 = tf.nn.relu(l3)
 
     output = tf.add(tf.matmul(l3, output_layer['weights']), output_layer['biases'])
-
+    # complete setting up the basics of a computation graph
     return output
 
 def train_neural_network(x):
