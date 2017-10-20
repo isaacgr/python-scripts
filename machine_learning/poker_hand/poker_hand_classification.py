@@ -13,8 +13,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 
 # load the dataset and give column names
-#url = "https://archive.ics.uci.edu/ml/machine-learning-databases/poker/poker-hand-training-true.data"
-url = "https://archive.ics.uci.edu/ml/machine-learning-databases/poker/poker-hand-testing.data"
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/poker/poker-hand-training-true.data"
+#url = "https://archive.ics.uci.edu/ml/machine-learning-databases/poker/poker-hand-testing.data"
 
 names = ['Suit 1', 'Rank 1', 'Suit 2', 'Rank 2','Suit 3', 'Rank 3',
             'Suit 4', 'Rank 4', 'Suit 5', 'Rank 5', 'Class']
