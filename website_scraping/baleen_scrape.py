@@ -46,12 +46,18 @@ def main():
     result = pd.DataFrame(new_data, columns=['Title', 'URL', 'Topic'])
 
     write_excel(result)
+    write_csv(result)
 
 
 def write_excel(result):
     writer = pd.ExcelWriter('feeds.xlsx')
     result.to_excel(writer, 'Feeds')
     writer.save()
+
+
+def write_csv(result):
+    with open('feeds.csv','w') as f:
+        result.to_csv(f, sep=',', encoding='utf-8', index=False)
 
 
 if __name__=='__main__':
