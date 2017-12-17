@@ -2,15 +2,14 @@
 # Put content into a csv file
 import requests
 import pandas as pd
-import openpyxl
 from bs4 import BeautifulSoup
 
 def main():
     data = []
 
     feeds_page = "http://baleen.districtdatalabs.com/"
-    r = requests.get(feeds_page)
-    html = r.text
+    request = requests.get(feeds_page)
+    html = request.text
     soup = BeautifulSoup(html, 'html.parser')
     topics = soup.find_all('a', {'class': 'list-group-item'}, href=True)
     tables = soup.find_all('table', {'class': 'table'})
@@ -23,12 +22,10 @@ def main():
             data.append([element for element in cols if element])
             data.append(topics[tables.index(table)]['href'])
 
-    for feeds in data:
-        for feed in feeds:
-            if '\n' in feed:
-                feeds.remove(feed)
-
     for feed in data:
+        for element in feed:
+            if '\n' in element:
+                feed.remove(element)
         if isinstance(feed, list):
             feed.append(data[data.index(feed)+1])
 
@@ -39,9 +36,9 @@ def main():
 
     new_data = []
     for row in data:
-        x, y, z = row
-        for y in y.split(','):
-            new_data.append([x,y,z])
+        title, url, topic = row
+        for url in url.split(','):
+            new_data.append([title, url, topic])
 
     result = pd.DataFrame(new_data, columns=['Title', 'URL', 'Topic'])
 
@@ -56,9 +53,9 @@ def write_excel(result):
 
 
 def write_csv(result):
-    with open('feeds.csv','w') as f:
+    with open('feeds.csv', 'w') as f:
         result.to_csv(f, sep=',', encoding='utf-8', index=False)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()
