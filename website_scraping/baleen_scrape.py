@@ -21,19 +21,29 @@ def main():
             cols = row.find_all('td')
             cols = [element.text.strip() for element in cols]
             data.append([element for element in cols if element])
+            data.append(topics[tables.index(table)]['href'])
 
     for feeds in data:
         for feed in feeds:
             if '\n' in feed:
                 feeds.remove(feed)
 
+    for feed in data:
+        if isinstance(feed, list):
+            feed.append(data[data.index(feed)+1])
+
+
+    for topic in data:
+        if isinstance(topic, unicode):
+            data.remove(topic)
+
     new_data = []
     for row in data:
-        x, y = row
+        x, y, z = row
         for y in y.split(','):
-            new_data.append([x,y])
+            new_data.append([x,y,z])
 
-    result = pd.DataFrame(new_data, columns=['Title', 'URL'])
+    result = pd.DataFrame(new_data, columns=['Title', 'URL', 'Topic'])
 
     write_excel(result)
 
