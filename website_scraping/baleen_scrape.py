@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
+
 def main():
     data = []
 
@@ -28,7 +29,6 @@ def main():
                 feed.remove(element)
         if isinstance(feed, list):
             feed.append(data[data.index(feed)+1])
-
 
     for topic in data:
         if isinstance(topic, unicode):
