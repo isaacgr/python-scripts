@@ -33,7 +33,7 @@ for page in range(2, int(pages) + 1):
                 print '[*] Could not download image'
                 continue
 
-        print "\n[*] Downloaded %d files" %(i+1)
+        print "\n[*] Downloaded %d files" %(i)
 
     except KeyboardInterrupt:
         print "[*] Exiting"
