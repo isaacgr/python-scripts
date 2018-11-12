@@ -20,7 +20,7 @@ for page in range(2, int(pages) + 1):
         for tag in soup.find_all('img'):
             try:
                 if tag.attrs['data-srcset']:
-                    image_url = tag.attrs['data-srcset'].replace('\\', '').replace('"','')
+                    image_url = tag.attrs['data-srcset'].replace('\\', '').replace('"','').replace('200','1000')
                     if os.path.splitext(os.path.basename(image_url))[1] == '.jpg':
                         current = requests.get(image_url, stream=True)
                         print "\n[*] Downloading: %s" % (os.path.basename(image_url))
