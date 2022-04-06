@@ -87,7 +87,7 @@ terminado==0.5
 tornado==4.2.1
 traitlets==4.0.0
 turtle==0.0.2
-Twisted==16.0.0
+Twisted==22.2.0
 unity-lens-photos==1.0
 urllib==1.21.1
 urllib3==1.21.1
